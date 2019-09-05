@@ -1,6 +1,11 @@
 package com.hogly;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class BasicLogic {
 
@@ -17,38 +22,46 @@ public class BasicLogic {
   }
 
   /**
-   * Calculate the distance of the closest numbers in the array
-   * Given [1,22,45,55,65] the expected result is 10
+   * Given a positive integer number, calculate a new number reversing their digits
+   *
+   * @param number
+   * @return
    */
-  public static int distClosestNumbers(int... numbers) {
-    int distance = Integer.MAX_VALUE;
-    for (int x = 0; x < numbers.length; x++) {
-      for (int y = x + 1; y < numbers.length; y++) {
-        int candidate = Math.abs(numbers[x] - numbers[y]);
-        if (distance > candidate) {
-          distance = candidate;
-        }
-      }
+  public static int reverseNumber(int number) {
+    int reverse = 0;
+    while (number > 0) {
+      int remainder = number % 10;
+      reverse = reverse * 10 + remainder;
+      number = number / 10;
     }
-    return distance;
+    return reverse;
   }
 
   /**
-   * Calculate the distance of the closest numbers in the array
+   * Given an array, find the int that appears an odd number of times.
+   * There will always be only one integer that appears an odd number of times.
    */
-  public static int distClosestNumbersSorting(int... numbers) {
-    if (numbers.length <= 1) {
-      return 0;
+  public static int findOddTimes(int[] values) {
+    Map<Integer, Integer> map = new HashMap<>();
+    for (int value : values) {
+      map.put(value, map.getOrDefault(value, 0) + 1);
     }
-    int distance = Integer.MAX_VALUE;
-    Arrays.sort(numbers);
-    for (int i = 0; i < numbers.length - 1; i++) {
-      int candidate = numbers[i + 1] - numbers[i];
-      if (distance > candidate) {
-        distance = candidate;
+    for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+      if (entry.getValue() % 2 != 0) {
+        return entry.getKey();
       }
     }
-    return distance;
+    return 0;
+  }
+
+  public static int findOddTimesJava8(int[] values) {
+    return Arrays.stream(values).boxed()
+      .collect(Collectors.groupingBy(Function.identity()))
+      .entrySet().stream()
+      .filter(entry -> entry.getValue().size() % 2 != 0)
+      .findFirst()
+      .map(entry -> entry.getKey())
+      .orElse(0);
   }
 
 }
